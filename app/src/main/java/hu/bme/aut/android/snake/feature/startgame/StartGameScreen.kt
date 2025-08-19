@@ -38,10 +38,10 @@ fun StartGameScreen (
     var emptyField by remember { mutableStateOf(false) }
 
     Column(
-        Modifier
-            .fillMaxSize()
+        modifier = modifier
+            .background(Color.Gray)
             .padding(16.dp)
-            .background(Color.Gray),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
