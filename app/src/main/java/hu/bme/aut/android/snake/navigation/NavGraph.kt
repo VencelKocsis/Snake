@@ -11,6 +11,7 @@ import hu.bme.aut.android.snake.feature.highscores.HighScoresScreen
 import hu.bme.aut.android.snake.feature.main.MainScreen
 import hu.bme.aut.android.snake.feature.main.MainViewModel
 import hu.bme.aut.android.snake.feature.settings.SettingsScreen
+import hu.bme.aut.android.snake.feature.startgame.StartGameScreen
 
 @Composable
 fun NavGraph(
@@ -27,6 +28,13 @@ fun NavGraph(
         //gameScreen
 
         //preGameScreen
+        composable("preGamescreen") {
+            mainViewModel.updateTitle("Game Settings", true)
+            mainViewModel.setNavigationAction { navController.navigate("mainscreen") }
+            StartGameScreen(
+                navController = navController
+            )
+        }
 
         //mainscreen
         composable("mainscreen") {
