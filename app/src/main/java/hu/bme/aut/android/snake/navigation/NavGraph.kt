@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import hu.bme.aut.android.snake.feature.main.MainScreen
 import hu.bme.aut.android.snake.feature.main.MainViewModel
+import hu.bme.aut.android.snake.feature.settings.SettingsScreen
 
 @Composable
 fun NavGraph(
@@ -23,16 +24,22 @@ fun NavGraph(
         modifier = modifier
     ) {
         //gameScreen
+
+        //preGameScreen
+
+        //mainscreen
         composable("mainscreen") {
             mainViewModel.updateTitle("Snake", false)
             MainScreen(navController = navController)
         }
-        //preGameScreen
-
-        //mainscreen
 
         //highscores
 
         //settings
+        composable("settings") {
+            mainViewModel.updateTitle("Settings", true)
+            mainViewModel.setNavigationAction { navController.navigate("mainscreen") }
+            SettingsScreen()
+        }
     }
 }
