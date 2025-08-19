@@ -4,9 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import hu.bme.aut.android.snake.feature.game.GameScreen
 import hu.bme.aut.android.snake.feature.highscores.HighScoresScreen
 import hu.bme.aut.android.snake.feature.main.MainScreen
 import hu.bme.aut.android.snake.feature.main.MainViewModel
@@ -26,6 +29,19 @@ fun NavGraph(
         modifier = modifier
     ) {
         //gameScreen
+        composable(
+            "gameScreen/{playerName}/{difficulty}",
+            arguments = listOf(
+                navArgument("playerName") { type = NavType.StringType },
+                navArgument("difficulty") { type = NavType.StringType }
+            )
+        ) {
+            mainViewModel.updateTitle("", false)
+            GameScreen(
+                name = it.arguments?.getString("playerName") ?: "",
+                difficulty = it.arguments?.getString("difficulty") ?: "",
+            )
+        }
 
         //preGameScreen
         composable("preGamescreen") {
