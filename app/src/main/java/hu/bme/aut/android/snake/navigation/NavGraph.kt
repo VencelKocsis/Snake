@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import hu.bme.aut.android.snake.feature.highscores.HighScoresScreen
 import hu.bme.aut.android.snake.feature.main.MainScreen
 import hu.bme.aut.android.snake.feature.main.MainViewModel
 import hu.bme.aut.android.snake.feature.settings.SettingsScreen
@@ -34,6 +35,11 @@ fun NavGraph(
         }
 
         //highscores
+        composable("highscores") {
+            mainViewModel.updateTitle("Highscores", true)
+            mainViewModel.setNavigationAction { navController.navigate("mainscreen") }
+            HighScoresScreen()
+        }
 
         //settings
         composable("settings") {
