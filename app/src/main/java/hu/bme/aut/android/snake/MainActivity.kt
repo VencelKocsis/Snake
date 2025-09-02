@@ -14,11 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import hu.bme.aut.android.snake.feature.main.MainNavScreen
 import hu.bme.aut.android.snake.feature.main.MainViewModel
+import hu.bme.aut.android.snake.model.SnakeViewModel
 import hu.bme.aut.android.snake.ui.theme.SnakeTheme
 
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
+    private val snakeViewmodel: SnakeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +28,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             SnakeTheme {
                 MainNavScreen(
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    snakeViewModel = snakeViewmodel
                 )
             }
         }

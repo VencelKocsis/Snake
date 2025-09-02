@@ -21,15 +21,18 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import hu.bme.aut.android.snake.R
+import hu.bme.aut.android.snake.model.SnakeViewModel
 import hu.bme.aut.android.snake.navigation.NavGraph
 import hu.bme.aut.android.snake.ui.theme.DarkGrey
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainNavScreen(
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    snakeViewModel: SnakeViewModel
 ) {
     //TopBar
     val title by mainViewModel.title.observeAsState("Snake")
@@ -86,10 +89,13 @@ fun MainNavScreen(
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         val navController = rememberNavController()
+        val state = snakeViewModel.state.collectAsStateWithLifecycle()
 
         NavGraph(
             modifier = Modifier.padding(innerPadding),
-            navController = navController
+            navController = navController,
+            snakeViewmodel = snakeViewModel,
+            state = state.value
         )
     }
 }

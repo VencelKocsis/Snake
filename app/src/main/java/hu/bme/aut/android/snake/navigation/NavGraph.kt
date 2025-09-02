@@ -14,14 +14,20 @@ import hu.bme.aut.android.snake.feature.highscores.HighScoresScreen
 import hu.bme.aut.android.snake.feature.main.MainScreen
 import hu.bme.aut.android.snake.feature.main.MainViewModel
 import hu.bme.aut.android.snake.feature.settings.SettingsScreen
+import hu.bme.aut.android.snake.feature.startgame.GameDifficulty
 import hu.bme.aut.android.snake.feature.startgame.StartGameScreen
+import hu.bme.aut.android.snake.feature.startgame.toGameDifficulty
+import hu.bme.aut.android.snake.model.SnakeState
+import hu.bme.aut.android.snake.model.SnakeViewModel
 
 @Composable
 fun NavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = "mainscreen",
-    mainViewModel: MainViewModel = viewModel()
+    mainViewModel: MainViewModel = viewModel(),
+    state: SnakeState,
+    snakeViewmodel: SnakeViewModel
 ) {
     NavHost(
         navController = navController,
@@ -37,9 +43,14 @@ fun NavGraph(
             )
         ) {
             mainViewModel.updateTitle("", false)
+            val name = it.arguments?.getString("playerName") ?: ""
+            val difficulty = it.arguments?.getString("difficulty")?.toGameDifficulty() ?: GameDifficulty.EASY
+            snakeViewmodel.setPlayerName(name)
+            snakeViewmodel.setGameDifficulty(difficulty)
             GameScreen(
-                name = it.arguments?.getString("playerName") ?: "",
-                difficulty = it.arguments?.getString("difficulty") ?: "",
+                navController = navController,
+                state = state,
+                onEvent = snakeViewmodel::onEvent
             )
         }
 

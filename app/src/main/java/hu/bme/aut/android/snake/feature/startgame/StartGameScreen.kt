@@ -122,3 +122,12 @@ enum class GameDifficulty() {
     MEDIUM,
     HARD
 }
+
+fun String.toGameDifficulty(): GameDifficulty? {
+    return when(this.uppercase()) {
+        "EASY" -> GameDifficulty.EASY
+        "MEDIUM" -> GameDifficulty.MEDIUM
+        "HARD" -> GameDifficulty.HARD
+        else -> GameDifficulty.EASY
+    }
+}
