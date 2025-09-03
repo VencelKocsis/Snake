@@ -1,5 +1,9 @@
 package hu.bme.aut.android.snake.model
 
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,8 +21,64 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SnakeViewModel @Inject constructor(
-    private val topScoreDao: TopScoreDao
-): ViewModel() {
+    private val topScoreDao: TopScoreDao,
+    private val sensorManager: SensorManager
+): ViewModel(), SensorEventListener {
+
+    //isTurned
+    private val _isTurned = MutableStateFlow(false)
+
+    //Accelerometer
+    private var accelerometer: Sensor? = null
+
+    //Is Sensor Controlled
+    private val _isSensorControlled = MutableStateFlow(false)
+    val isSensorControlled: StateFlow<Boolean> = _isSensorControlled.asStateFlow()
+
+    //Init
+    init {
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+    }
+
+    //onSensorChanged
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (!isSensorControlled.value) return
+
+        event?.let {
+            val x = it.values[0]
+            val y = it.values[1]
+
+            val threshold = 2.0f
+
+            val direction = when {
+                x < -threshold -> Direction.RIGHT
+                x > threshold -> Direction.LEFT
+                y < -threshold -> Direction.UP
+                y > threshold -> Direction.DOWN
+                else -> null
+            }
+
+            direction?.let {
+                onEvent(SnakeEvent.ChangeDir(it))
+            }
+        }
+    }
+
+    //onAccuracyChanged
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        //Not Used
+    }
+
+    fun setSensorControlled(enabled: Boolean) {
+        _isSensorControlled.value = enabled
+        if (enabled) {
+            accelerometer?.let {
+                sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+            }
+        } else {
+            sensorManager.unregisterListener(this)
+        }
+    }
 
     //Top Scores
     val topScores: Flow<List<TopScore>> = topScoreDao.getAll()

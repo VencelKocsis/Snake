@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import hu.bme.aut.android.snake.feature.main.MainNavScreen
 import hu.bme.aut.android.snake.feature.main.MainViewModel
+import hu.bme.aut.android.snake.feature.settings.SettingsViewModel
 import hu.bme.aut.android.snake.model.SnakeViewModel
 import hu.bme.aut.android.snake.ui.theme.SnakeTheme
 
@@ -15,7 +16,8 @@ import hu.bme.aut.android.snake.ui.theme.SnakeTheme
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
-    private val snakeViewmodel: SnakeViewModel by viewModels()
+    private val snakeViewModel: SnakeViewModel by viewModels()
+    private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +26,8 @@ class MainActivity : ComponentActivity() {
             SnakeTheme {
                 MainNavScreen(
                     mainViewModel = mainViewModel,
-                    snakeViewModel = snakeViewmodel
+                    snakeViewModel = snakeViewModel,
+                    settingsViewModel = settingsViewModel
                 )
             }
         }

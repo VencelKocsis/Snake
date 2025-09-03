@@ -18,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import hu.bme.aut.android.snake.model.Direction
 import hu.bme.aut.android.snake.model.SnakeEvent
@@ -39,14 +41,18 @@ import hu.bme.aut.android.snake.R
 import hu.bme.aut.android.snake.draw.board.drawBoard
 import hu.bme.aut.android.snake.draw.food.drawFood
 import hu.bme.aut.android.snake.draw.snake.drawSnake
+import hu.bme.aut.android.snake.feature.settings.SettingsViewModel
 import hu.bme.aut.android.snake.model.GameState
 
 @Composable
 fun GameScreen(
     state: SnakeState,
     onEvent: (SnakeEvent) -> Unit,
-    navController: NavController
+    navController: NavController,
+    settingsViewModel: SettingsViewModel
 ) {
+    val isSensorControlled by settingsViewModel.isSensorControlled.collectAsStateWithLifecycle()
+
     val imageBitmap = ImageBitmap.imageResource(id = R.mipmap.food)
     val snakeHeadBitmap = when(state.direction){
         Direction.DOWN-> ImageBitmap.imageResource(id = R.mipmap.snakehead1)
@@ -146,18 +152,190 @@ fun GameScreen(
             )
         }
 
-        //Controllers
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Gray)
-        ) {
-            //Column 1
+        if (!isSensorControlled) {
+            //Controllers
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Gray)
+            ) {
+                //Column 1
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                        .border(1.dp, Color.Black)
+                ) {
+                    //TextButton 1
+                    TextButton(
+                        onClick = {
+                            when (state.gameState) {
+                                GameState.IDLE -> onEvent(SnakeEvent.StartGame)
+                                GameState.STARTED -> onEvent(SnakeEvent.PauseGame)
+                                GameState.PAUSED -> onEvent(SnakeEvent.StartGame)
+                            }
+                        },
+                        Modifier.fillMaxSize()
+                    ) {
+                        Text(
+                            text = when (state.gameState) {
+                                GameState.IDLE -> "Start"
+                                GameState.STARTED -> "Pause"
+                                GameState.PAUSED -> "Resume"
+                            },
+                            fontSize = 30.sp,
+                            fontFamily = FontFamily(Font(R.font.pixelfont, style = FontStyle.Normal)),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                //Column 2
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .weight(2f)
+                        .fillMaxSize()
+                        .border(1.dp, Color.Black)
+                ) {
+                    //Row 2.1
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .border(1.dp, Color.Black)
+                    ) {
+                        //IconButton 2.1.1
+                        IconButton(
+                            onClick = {
+                                onEvent(SnakeEvent.ChangeDir(Direction.UP))
+                            },
+                            modifier = Modifier
+                                .background(Color.Gray)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(60.dp, 60.dp)
+                                    .rotate(0f),
+                                tint = Color.Black,
+                                painter = painterResource(id = R.mipmap.arrow),
+                                contentDescription = null
+                            )
+                        }
+                    }
+
+                    //Row 2.2
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .border(1.dp, Color.Black)
+                    ) {
+                        //IconButton 2.2.1
+                        IconButton(
+                            onClick = {
+                                onEvent(SnakeEvent.ChangeDir(Direction.LEFT))
+                            },
+                            modifier = Modifier
+                                .background(Color.Gray)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(60.dp, 60.dp)
+                                    .rotate(-90f),
+                                tint = Color.Black,
+                                painter = painterResource(id = R.mipmap.arrow),
+                                contentDescription = null
+                            )
+                        }
+
+                        //IconButton 2.2.2
+                        IconButton(
+                            onClick = {
+                                onEvent(SnakeEvent.ChangeDir(Direction.RIGHT))
+                            },
+                            modifier = Modifier
+                                .background(Color.Gray)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(60.dp, 60.dp)
+                                    .rotate(90f),
+                                tint = Color.Black,
+                                painter = painterResource(id = R.mipmap.arrow),
+                                contentDescription = null
+                            )
+                        }
+                    }
+
+                    //Row 2.3
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .border(1.dp, Color.Black)
+                    ) {
+                        //IconButton 2.3.1
+                        IconButton(
+                            onClick = {
+                                onEvent(SnakeEvent.ChangeDir(Direction.DOWN))
+                            },
+                            modifier = Modifier
+                                .background(Color.Gray)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(60.dp, 60.dp)
+                                    .rotate(180f),
+                                tint = Color.Black,
+                                painter = painterResource(id = R.mipmap.arrow),
+                                contentDescription = null
+                            )
+                        }
+                    }
+                }
+
+                //Column 3
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                        .border(1.dp, Color.Black)
+                ) {
+                    //TextButton 3.2
+                    TextButton(
+                        onClick = {
+                            onEvent(SnakeEvent.ResetGame)
+                        },
+                        Modifier.fillMaxSize()
+                    ) {
+                        Text(
+                            text = if (state.isGameOver) "Restart" else "New Game",
+                            fontSize = 30.sp,
+                            fontFamily = FontFamily(Font(R.font.pixelfont, style = FontStyle.Normal)),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+        } else {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .weight(1f)
+                    .background(Color.Gray)
                     .fillMaxSize()
                     .border(1.dp, Color.Black)
             ) {
@@ -170,7 +348,7 @@ fun GameScreen(
                             GameState.PAUSED -> onEvent(SnakeEvent.StartGame)
                         }
                     },
-                    Modifier.fillMaxSize()
+                    Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = when (state.gameState) {
@@ -179,145 +357,33 @@ fun GameScreen(
                             GameState.PAUSED -> "Resume"
                         },
                         fontSize = 30.sp,
-                        fontFamily = FontFamily(Font(R.font.pixelfont, style = FontStyle.Normal)),
-                        textAlign = TextAlign.Center
+                        color = Color.Black,
+                        fontFamily = FontFamily(
+                            Font(
+                                R.font.pixelfont,
+                                style = FontStyle.Normal
+                            )
+                        ),
                     )
                 }
-            }
 
-            //Column 2
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .weight(2f)
-                    .fillMaxSize()
-                    .border(1.dp, Color.Black)
-            ) {
-                //Row 2.1
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .border(1.dp, Color.Black)
-                ) {
-                    //IconButton 2.1.1
-                    IconButton(
-                        onClick = {
-                            onEvent(SnakeEvent.ChangeDir(Direction.UP))
-                        },
-                        modifier = Modifier
-                            .background(Color.Gray)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(60.dp, 60.dp)
-                                .rotate(0f),
-                            tint = Color.Black,
-                            painter = painterResource(id = R.mipmap.arrow),
-                            contentDescription = null
-                        )
-                    }
-                }
-
-                //Row 2.2
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .border(1.dp, Color.Black)
-                ) {
-                    //IconButton 2.2.1
-                    IconButton(
-                        onClick = {
-                            onEvent(SnakeEvent.ChangeDir(Direction.LEFT))
-                        },
-                        modifier = Modifier
-                            .background(Color.Gray)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(60.dp, 60.dp)
-                                .rotate(-90f),
-                            tint = Color.Black,
-                            painter = painterResource(id = R.mipmap.arrow),
-                            contentDescription = null
-                        )
-                    }
-
-                    //IconButton 2.2.2
-                    IconButton(
-                        onClick = {
-                            onEvent(SnakeEvent.ChangeDir(Direction.RIGHT))
-                        },
-                        modifier = Modifier
-                            .background(Color.Gray)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(60.dp, 60.dp)
-                                .rotate(90f),
-                            tint = Color.Black,
-                            painter = painterResource(id = R.mipmap.arrow),
-                            contentDescription = null
-                        )
-                    }
-                }
-
-                //Row 2.3
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .border(1.dp, Color.Black)
-                ) {
-                    //IconButton 2.3.1
-                    IconButton(
-                        onClick = {
-                            onEvent(SnakeEvent.ChangeDir(Direction.DOWN))
-                        },
-                        modifier = Modifier
-                            .background(Color.Gray)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(60.dp, 60.dp)
-                                .rotate(180f),
-                            tint = Color.Black,
-                            painter = painterResource(id = R.mipmap.arrow),
-                            contentDescription = null
-                        )
-                    }
-                }
-            }
-
-            //Column 3
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize()
-                    .border(1.dp, Color.Black)
-            ) {
-                //TextButton 3.2
+                //TextButton 2
                 TextButton(
                     onClick = {
                         onEvent(SnakeEvent.ResetGame)
                     },
-                    Modifier.fillMaxSize()
+                    Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = if (state.isGameOver) "Restart" else "New Game",
                         fontSize = 30.sp,
-                        fontFamily = FontFamily(Font(R.font.pixelfont, style = FontStyle.Normal)),
-                        textAlign = TextAlign.Center
+                        color = Color.Black,
+                        fontFamily = FontFamily(
+                            Font(
+                                R.font.pixelfont,
+                                style = FontStyle.Normal
+                            )
+                        ),
                     )
                 }
             }

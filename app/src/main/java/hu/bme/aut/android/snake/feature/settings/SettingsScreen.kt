@@ -22,13 +22,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import hu.bme.aut.android.snake.R
 
 @Composable
-fun SettingsScreen() {
-    var isSensorControlled by remember {
-        mutableStateOf(false)
-    }
+fun SettingsScreen(
+    settingsViewModel: SettingsViewModel = viewModel()
+) {
+    val isSensorControlled by settingsViewModel.isSensorControlled.collectAsStateWithLifecycle()
 
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -53,7 +55,7 @@ fun SettingsScreen() {
             Switch(
                 checked = isSensorControlled,
                 onCheckedChange = {
-                    isSensorControlled = it
+                    settingsViewModel.setSensorControlled(it)
                 }
             )
         }

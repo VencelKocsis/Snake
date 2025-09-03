@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import hu.bme.aut.android.snake.R
+import hu.bme.aut.android.snake.feature.settings.SettingsViewModel
 import hu.bme.aut.android.snake.model.SnakeViewModel
 import hu.bme.aut.android.snake.navigation.NavGraph
 import hu.bme.aut.android.snake.ui.theme.DarkGrey
@@ -32,8 +33,12 @@ import hu.bme.aut.android.snake.ui.theme.DarkGrey
 @Composable
 fun MainNavScreen(
     mainViewModel: MainViewModel,
-    snakeViewModel: SnakeViewModel
+    snakeViewModel: SnakeViewModel,
+    settingsViewModel: SettingsViewModel
 ) {
+    val isSensorControlled by settingsViewModel.isSensorControlled.collectAsStateWithLifecycle()
+    snakeViewModel.setSensorControlled(isSensorControlled)
+
     //TopBar
     val title by mainViewModel.title.observeAsState("Snake")
     val navigationLambda by mainViewModel.navigate.observeAsState()
@@ -95,6 +100,7 @@ fun MainNavScreen(
             modifier = Modifier.padding(innerPadding),
             navController = navController,
             snakeViewmodel = snakeViewModel,
+            settingsViewModel = settingsViewModel,
             state = state.value
         )
     }

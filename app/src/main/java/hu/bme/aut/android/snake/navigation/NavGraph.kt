@@ -14,6 +14,7 @@ import hu.bme.aut.android.snake.feature.highscores.HighScoresScreen
 import hu.bme.aut.android.snake.feature.main.MainScreen
 import hu.bme.aut.android.snake.feature.main.MainViewModel
 import hu.bme.aut.android.snake.feature.settings.SettingsScreen
+import hu.bme.aut.android.snake.feature.settings.SettingsViewModel
 import hu.bme.aut.android.snake.feature.startgame.GameDifficulty
 import hu.bme.aut.android.snake.feature.startgame.StartGameScreen
 import hu.bme.aut.android.snake.feature.startgame.toGameDifficulty
@@ -27,7 +28,8 @@ fun NavGraph(
     startDestination: String = "mainscreen",
     mainViewModel: MainViewModel = viewModel(),
     state: SnakeState,
-    snakeViewmodel: SnakeViewModel
+    snakeViewmodel: SnakeViewModel,
+    settingsViewModel: SettingsViewModel
 ) {
     NavHost(
         navController = navController,
@@ -50,7 +52,8 @@ fun NavGraph(
             GameScreen(
                 navController = navController,
                 state = state,
-                onEvent = snakeViewmodel::onEvent
+                onEvent = snakeViewmodel::onEvent,
+                settingsViewModel = settingsViewModel
             )
         }
 
@@ -80,7 +83,7 @@ fun NavGraph(
         composable("settings") {
             mainViewModel.updateTitle("Settings", true)
             mainViewModel.setNavigationAction { navController.navigate("mainscreen") }
-            SettingsScreen()
+            SettingsScreen(settingsViewModel = settingsViewModel)
         }
     }
 }
