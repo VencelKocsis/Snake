@@ -2,15 +2,36 @@ package hu.bme.aut.android.snake.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import hu.bme.aut.android.snake.data.Entity.TopScore
+import hu.bme.aut.android.snake.data.dao.TopScoreDao
 import hu.bme.aut.android.snake.feature.startgame.GameDifficulty
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SnakeViewModel(): ViewModel() {
+@HiltViewModel
+class SnakeViewModel @Inject constructor(
+    private val topScoreDao: TopScoreDao
+): ViewModel() {
+
+    //Top Scores
+    val topScores: Flow<List<TopScore>> = topScoreDao.getAll()
+
+    //PlayerName (Delete Previous)
+    private val _playerName = MutableStateFlow("")
+    val playerName: StateFlow<String> = _playerName.asStateFlow()
+
+    //Set Player Name
+    fun setPlayerName(name: String) {
+        _playerName.value = name
+    }
+
     //State
     private val _state = MutableStateFlow((SnakeState()))
     val state = _state.asStateFlow()
@@ -18,9 +39,6 @@ class SnakeViewModel(): ViewModel() {
     //Game Difficulty
     private val _gameDifficulty = MutableStateFlow(GameDifficulty.EASY)
     val gameDifficulty: StateFlow<GameDifficulty> = _gameDifficulty.asStateFlow()
-
-    //Player Name
-    private var playerName: String = ""
 
     //##FUNS##
 
@@ -61,11 +79,6 @@ class SnakeViewModel(): ViewModel() {
     //Set Game Difficulty
     fun setGameDifficulty(difficulty: GameDifficulty) {
         _gameDifficulty.value = difficulty
-    }
-
-    //Set Player Name
-    fun setPlayerName(name: String) {
-        playerName = name
     }
 
     //Start Game
@@ -125,6 +138,16 @@ class SnakeViewModel(): ViewModel() {
             !isInBounds(newHead, xGrid, yGrid)
         ) {
             //DATABASE INSERT
+            viewModelScope.launch {
+                topScoreDao.insert(
+                    TopScore(
+                        name = playerName.value,
+                        score = state.snake.size - 1,
+                        difficulty = gameDifficulty.value.toString()
+                    )
+                )
+            }
+
             return state.copy(isGameOver = true)
         }
 

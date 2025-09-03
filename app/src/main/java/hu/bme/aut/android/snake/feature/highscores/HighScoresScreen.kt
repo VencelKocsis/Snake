@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,16 +20,16 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hu.bme.aut.android.snake.R
+import hu.bme.aut.android.snake.model.SnakeViewModel
 
 @Composable
-fun HighScoresScreen() {
+fun HighScoresScreen(
+    snakeViewModel: SnakeViewModel
+) {
 
-    val highScores = listOf(
-        Triple("John", 100, "Easy"),
-        Triple("Jane", 200, "Medium"),
-        Triple("Jack", 300, "Hard")
-    )
+    val highScores by snakeViewModel.topScores.collectAsStateWithLifecycle(listOf())
 
     Column(
         Modifier
@@ -59,9 +60,9 @@ fun HighScoresScreen() {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TableText(highScores[index].first, Modifier.weight(2f))
-                    TableText(highScores[index].second.toString(), Modifier.weight(1f))
-                    TableText(highScores[index].third, Modifier.weight(2f))
+                    TableText(highScores[index].name, Modifier.weight(2f))
+                    TableText(highScores[index].score.toString(), Modifier.weight(1f))
+                    TableText(highScores[index].difficulty, Modifier.weight(2f))
                 }
             }
         }

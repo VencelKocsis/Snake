@@ -73,7 +73,7 @@ fun NavGraph(
         composable("highscores") {
             mainViewModel.updateTitle("Highscores", true)
             mainViewModel.setNavigationAction { navController.navigate("mainscreen") }
-            HighScoresScreen()
+            HighScoresScreen(snakeViewModel = snakeViewmodel)
         }
 
         //settings
