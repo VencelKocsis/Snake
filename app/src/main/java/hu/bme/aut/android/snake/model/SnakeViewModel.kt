@@ -123,6 +123,8 @@ class SnakeViewModel @Inject constructor(
                 //PASS IF GAME NOT STARTED
                 if (state.value.gameState != GameState.STARTED) return
 
+                if(_isTurned.value) return
+
                 updateDir(
                     when {
                         event.dir == Direction.UP && state.value.direction != Direction.DOWN -> Direction.UP
@@ -170,6 +172,7 @@ class SnakeViewModel @Inject constructor(
     //Direction Update
     private fun updateDir(dir: Direction) {
         _state.update { it.copy(direction = dir) }
+        _isTurned.value = true
     }
 
     //Game Update
@@ -222,6 +225,7 @@ class SnakeViewModel @Inject constructor(
         if (newHead != state.food) {
             newSnake = newSnake.toMutableList()
             newSnake.removeAt(newSnake.lastIndex)
+            _isTurned.value = false
         }
 
         return state.copy(snake = newSnake, food = newFood)
@@ -235,6 +239,12 @@ class SnakeViewModel @Inject constructor(
     fun deleteAllHighScores() {
         viewModelScope.launch {
             topScoreDao.deleteAll()
+        }
+    }
+
+    fun deleteHighScore(score: TopScore) {
+        viewModelScope.launch {
+            topScoreDao.delete(score)
         }
     }
 }
