@@ -231,4 +231,10 @@ class SnakeViewModel @Inject constructor(
     private fun isInBounds(coordinate: Coordinate, xGridSize: Int, yGridSize: Int): Boolean {
         return coordinate.x in 1 until xGridSize-1 && coordinate.y in 1 until yGridSize-1
     }
+
+    fun deleteAllHighScores() {
+        viewModelScope.launch {
+            topScoreDao.deleteAll()
+        }
+    }
 }

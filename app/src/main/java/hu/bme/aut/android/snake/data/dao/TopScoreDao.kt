@@ -1,6 +1,7 @@
 package hu.bme.aut.android.snake.data.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -17,4 +18,13 @@ interface TopScoreDao {
 
     @Update
     suspend fun update(topScore: TopScore)
+
+    @Query("DELETE FROM topscore WHERE id = :id")
+    suspend fun deleteById(id: Long)
+
+    @Delete
+    suspend fun delete(topScore: TopScore)
+
+    @Query("DELETE FROM topscore")
+    suspend fun deleteAll()
 }

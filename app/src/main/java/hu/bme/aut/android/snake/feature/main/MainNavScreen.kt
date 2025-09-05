@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -69,7 +68,7 @@ fun MainNavScreen(
                     actions = {
                         IconButton(
                             onClick = {
-                                // TODO
+                                snakeViewModel.deleteAllHighScores()
                             }
                         ) {
                             Icon(
@@ -95,7 +94,7 @@ fun MainNavScreen(
         },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        val navController = rememberNavController()
+        val navController = rememberNavController() 
         val state = snakeViewModel.state.collectAsStateWithLifecycle()
 
         NavGraph(
